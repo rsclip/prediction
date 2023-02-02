@@ -9,7 +9,7 @@ import dataGen
 BATCH_SIZE = 128
 LEARNING_RATE = 0.05
 EPOCHS = 6000
-DATA_FUNC = dataGen.linear
+DATA_FUNC = dataGen.cos
 
 
 class Model(nn.Module):
