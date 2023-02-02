@@ -6,24 +6,23 @@ import numpy as np
 
 import dataGen
 
-BATCH_SIZE = 10
-INPUT_DIM = 1
-HIDDEN_DIM = 3
-OUTPUT_DIM = 1
-LEARNING_RATE = 0.01
-EPOCHS = 1000
-DATA_FUNC = dataGen.gen_linear
+BATCH_SIZE = 128
+LEARNING_RATE = 0.05
+EPOCHS = 6000
+DATA_FUNC = dataGen.linear
 
 
 class Model(nn.Module):
-    def __init__(self, inp_dim, hid_dim, out_dim):
+    def __init__(self):
         super().__init__()
-        self.layer1 = nn.Linear(inp_dim, hid_dim)
-        self.layer2 = nn.Linear(hid_dim, out_dim)
+        self.layer1 = nn.Linear(1, 4)
+        self.layer2 = nn.Linear(4, 4)
+        self.layer3 = nn.Linear(4, 1)
 
     def forward(self, x):
-        x = torch.relu(self.layer1(x))
-        x = self.layer2(x)
+        x = torch.tanh(self.layer1(x))
+        x = torch.tanh(self.layer2(x))
+        x = self.layer3(x)
         return x
 
 
@@ -58,7 +57,7 @@ testSet = Data(xTest, yTest)
 test_dataloader = DataLoader(testSet, batch_size=BATCH_SIZE, shuffle=True)
 
 # Create model
-model = Model(INPUT_DIM, HIDDEN_DIM, OUTPUT_DIM)
+model = Model()
 
 def train(train_dl):
     # Loss function
@@ -69,7 +68,9 @@ def train(train_dl):
     lossHistory = []
 
     for epoch in range(1, EPOCHS + 1):
-        print(f"Epoch {epoch}/{EPOCHS}")
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch}/{EPOCHS}")
+        
         for x, y in train_dl:
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -123,6 +124,6 @@ lossAx.legend()
 lossAx.set_title("Loss")
 
 fig.tight_layout()
-fig.suptitle(f"Model: {INPUT_DIM} -> {HIDDEN_DIM} -> {OUTPUT_DIM} | LR: {LEARNING_RATE} | Epochs: {EPOCHS} | Data: {DATA_FUNC.__name__} | Accuracy {accuracy*100:.2f}%")
+fig.suptitle(f"Model LR: {LEARNING_RATE} | Epochs: {EPOCHS} | Data: {DATA_FUNC.__name__} | Accuracy {accuracy*100:.2f}%")
 
 plt.show()
